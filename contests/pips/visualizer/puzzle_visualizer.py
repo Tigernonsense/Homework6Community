@@ -14,7 +14,7 @@ GRID_EMPTY      = -1
 
 # UI constants
 CANVAS_WIDTH    = 800
-CANVAS_HEIGHT   = 500
+CANVAS_HEIGHT   = 600
 CELL_SIZE       = 50
 FONT            = ("Arial", 16)
 DOMINO_WIDTH    = CELL_SIZE
@@ -82,6 +82,9 @@ def read_puzzle_file(file_path):
             row = 0
             while i < len(lines) and lines[i].strip() != "":
                 vals = lines[i].strip().split(" ")
+
+                # Remove the empty stuff
+                vals = [ v for v in vals if v.strip() != "" ]
                 for col in range(grid.width):
                     val = GRID_BLOCKED
                     if vals[col] == ".":
@@ -172,7 +175,7 @@ def visualize_puzzle(grid, dominoes, requirements):
 if __name__ == "__main__":
     import os
 
-    puzzles_dir = "./puzzles/"
+    puzzles_dir = input("Puzzles directory: ").strip()
 
     for entry in os.scandir(puzzles_dir):
         if entry.is_file():
