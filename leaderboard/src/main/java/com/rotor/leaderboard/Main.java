@@ -2,27 +2,83 @@ package com.rotor.leaderboard;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import javax.swing.JFrame;
+import java.util.HashMap;
 
 public class Main {
     static final int INITIAL_WINDOW_WIDTH   = 1024;
     static final int INITIAL_WINDOW_HEIGHT  = 600;
 
+    // Keys expected in the config file.
+    static final String TITLE_KEY = "title";
+    static final String EXECUTABLES_DIR_KEY = "executablesDir";
+    static final String PUZZLES_DIR_KEY = "puzzlesDir";
+    static final String EXPECTED_OUTPUTS_DIR_KEY = "expectedOutputsDir";
+
+    static HashMap<String, String> readConfig(String path) {
+        File configFile = new File(path);
+
+        if (!configFile.exists()) {
+            System.out.println("Config file not found: " + path);
+            return null;
+        }
+
+        String configDir = configFile.getParent();
+
+        HashMap<String, String> configMap = new HashMap<>();
+
+        try {
+            String configContent = new String(Files.readAllBytes(configFile.toPath()), StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(new StringReader(configContent));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue; // Skip empty lines and comments
+                }
+
+                String[] parts = line.split("=", 2);
+                if (parts.length == 2) {
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+
+                    // Remove surrounding quotes if present
+                    if (value.startsWith("\"") && value.endsWith("\"")) {
+                        value = value.substring(1, value.length() - 1);
+                    }
+
+                    // Check if the value is a relative path and adjust
+                    if (value.startsWith("./") || value.startsWith(".\\")) {
+                        value = configDir + File.separator + value.substring(2);
+                    }
+                        
+                    configMap.put(key, value);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return configMap;
+    }
+
      public static void main(String[] args) {
         // Program run as:
-        // java -jar PipsLeaderboard.jar <executables> <puzzles> <outputs>
-        // executables contains all of the programs being compared,
-        // puzzles contains all of the puzzles being tested,
-        // outputs is the expected output for each puzzle to ensure correctness.
-        if (args.length < 3) {
-            System.out.println("Usage: java -jar PipsLeaderboard.jar <executables> <puzzles> <outputs>");
+        // java -jar leaderboard.jar /path/to/contest/leaderboard.cfg
+        // Where leaderboard.cfg will contain the paths/settings.
+        if (args.length < 1) {
+            System.out.println("Usage: java -jar leaderboard.jar /path/to/contest/leaderboard.cfg");
             return;
         }
 
         boolean trackMemoryUsage = true;
 
-        // Arguments:
+        // Optional arguments:
         // --disable-memory-tracker:  Disables creation of the memory poller thread.
         // --timeout=SECONDS: Specify the timeout, otherwise use the default of 10 seconds.
         for (String arg: args) {
@@ -47,13 +103,19 @@ public class Main {
             ProcessTimer.initOSContext();
         }
 
-        Leaderboard leaderboard = new Leaderboard("Pips Solver Leaderboard");
+        HashMap<String, String> config = readConfig(args[0]);
+        if (config == null) {
+            System.out.println("Failed to read config file.");
+            return;
+        }
+
+        Leaderboard leaderboard = new Leaderboard(config.get(TITLE_KEY));
         leaderboard.setShowMemory(trackMemoryUsage);
 
         // Iterate over executables and puzzles
-        File executablesDir = new File(args[0]);
-        File puzzlesDir = new File(args[1]);
-        File expectedOutputsDir = new File(args[2]);
+        File executablesDir = new File(config.get(EXECUTABLES_DIR_KEY));
+        File puzzlesDir = new File(config.get(PUZZLES_DIR_KEY));
+        File expectedOutputsDir = new File(config.get(EXPECTED_OUTPUTS_DIR_KEY));
 
         File[] executables = executablesDir.listFiles();
         File[] puzzles = puzzlesDir.listFiles();
@@ -63,19 +125,19 @@ public class Main {
         if (puzzles != null) {
             java.util.Arrays.sort(puzzles);
         } else {
-            System.out.println("No puzzles found in " + args[1]);
+            System.out.println("No puzzles found in " + config.get(PUZZLES_DIR_KEY));
             return;
         }
 
         if (expectedOutputs != null) {
             java.util.Arrays.sort(expectedOutputs);
         } else {
-            System.out.println("No expected outputs found in " + args[2]);
+            System.out.println("No expected outputs found in " + config.get(EXPECTED_OUTPUTS_DIR_KEY));
             return;
         }
 
         if (executables == null) {
-            System.out.println("No executables found in " + args[0]);
+            System.out.println("No executables found in " + config.get(EXECUTABLES_DIR_KEY));
             return;
         }
 
