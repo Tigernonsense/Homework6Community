@@ -22,3 +22,20 @@ Welcome to the **Homework 6 Community** — recreational programming competition
 ## Join our Discord
 
 👉 https://discord.gg/VKjMK8QW
+
+## Using the Leaderboard
+
+### To Compile:
+```bash
+./gradlew shadowJar
+```
+
+### To Run (with memory tracking):
+```bash
+java --enable-native-access=ALL-UNNAMED -jar leaderboard/build/libs/leaderboard-all.jar contests/.../leaderboard.cfg --timeout=10
+```
+
+### To Run (without memory tracking):
+```bash
+java -jar leaderboard/build/libs/leaderboard-all.jar contests/.../leaderboard.cfg --disable-memory-tracker --timeout=10
+```
