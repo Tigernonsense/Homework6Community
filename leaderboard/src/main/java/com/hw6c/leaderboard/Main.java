@@ -1,4 +1,4 @@
-package com.rotor.leaderboard;
+package com.hw6c.leaderboard;
 
 import java.io.File;
 import java.io.IOException;

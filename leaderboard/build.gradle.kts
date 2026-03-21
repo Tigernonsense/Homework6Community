@@ -42,7 +42,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "com.rotor.leaderboard.Main"
+    mainClass = "com.hw6c.leaderboard.Main"
 }
 
 tasks.named<Test>("test") {
@@ -51,5 +51,5 @@ tasks.named<Test>("test") {
 }
 
 tasks.jar {
-    manifest.attributes["Main-Class"] = "com.rotor.leaderboard.Main"
+    manifest.attributes["Main-Class"] = "com.hw6c.leaderboard.Main"
 }
