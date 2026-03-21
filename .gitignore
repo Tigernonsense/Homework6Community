@@ -1,0 +1,20 @@
+# Ignore IDE files.
+.vs/
+.vscode/
+.idea/
+
+# Ignore macOS system files.
+.DS_Store
+
+# Ignore temporary files in the root directory
+tmp*
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+bin
+
+# Ignore Kotlin plugin data
+.kotlin
