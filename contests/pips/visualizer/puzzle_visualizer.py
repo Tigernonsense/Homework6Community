@@ -135,6 +135,8 @@ def visualize_puzzle(grid, dominoes, requirements):
     canvas = tk.Canvas(root, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg="white")
     canvas.pack()
 
+    grid_start = 30
+
     # Draw the grid
     for r in range(grid.height):
         for c in range(grid.width):
@@ -142,23 +144,23 @@ def visualize_puzzle(grid, dominoes, requirements):
             if cell_value >= 0:
                 color = get_color(int(cell_value))
                 canvas.create_rectangle(
-                    c * CELL_SIZE, r * CELL_SIZE,
-                    (c + 1) * CELL_SIZE, (r + 1) * CELL_SIZE,
+                    grid_start + (c * CELL_SIZE), grid_start + (r * CELL_SIZE),
+                    grid_start + ((c + 1) * CELL_SIZE), grid_start + ((r + 1) * CELL_SIZE),
                     fill=color, outline="black"
                 )
                 canvas.create_text(
-                    (c + 0.5) * CELL_SIZE, (r + 0.5) * CELL_SIZE,
+                    grid_start + ((c + 0.5) * CELL_SIZE), grid_start + ((r + 0.5) * CELL_SIZE),
                     text=requirements[cell_value].req_str, font=FONT
                 )
             elif cell_value == GRID_EMPTY:
                 canvas.create_rectangle(
-                    c * CELL_SIZE, r * CELL_SIZE,
-                    (c + 1) * CELL_SIZE, (r + 1) * CELL_SIZE,
+                    grid_start + (c * CELL_SIZE), grid_start + (r * CELL_SIZE),
+                    grid_start + ((c + 1) * CELL_SIZE), grid_start + ((r + 1) * CELL_SIZE),
                     fill="#FFE79F", outline="black"
                 )
 
     # Draw dominoes at the bottom
-    domino_start_y = grid.height * CELL_SIZE + 20
+    domino_start_y = grid_start + (grid.height * CELL_SIZE) + 20
     for i, domino in enumerate(dominoes):
         x1 = (i % DOM_LINE_SIZE) * (CELL_SIZE + DOMINO_XSEP) + DOM_XOFFSET
         y1 = domino_start_y + (DOMINO_YSEP * (i // DOM_LINE_SIZE))
