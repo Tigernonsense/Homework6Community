@@ -8,7 +8,7 @@ Welcome to the **Homework 6 Community** — recreational programming competition
 
 ## 🧩 Puzzles
 
-- Pips (https://www.nytimes.com/games/pips)
+- Pips (https://www.nytimes.com/games/pips) (ONGOING)
 
 ## 📜 Rules
 
@@ -25,17 +25,17 @@ Welcome to the **Homework 6 Community** — recreational programming competition
 
 ## Using the Leaderboard
 
-### To Compile:
+### Build:
 ```bash
 ./gradlew shadowJar
 ```
 
-### To Run (with memory tracking):
+### Run (with memory tracking):
 ```bash
 java --enable-native-access=ALL-UNNAMED -jar leaderboard/build/libs/leaderboard-all.jar contests/.../leaderboard.cfg --timeout=10
 ```
 
-### To Run (without memory tracking):
+### Run (without memory tracking):
 ```bash
 java -jar leaderboard/build/libs/leaderboard-all.jar contests/.../leaderboard.cfg --disable-memory-tracker --timeout=10
 ```
